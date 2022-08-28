@@ -1,4 +1,4 @@
-import { Box, makeStyles, styled } from "@mui/material";
+import { Box, Container, makeStyles, styled } from "@mui/material";
 import React from "react";
 import { Page } from "../../constants/page";
 import Footer from "../elements/Footer";
@@ -18,7 +18,9 @@ const MainTemplate: React.FC<MainTemplateProps> = ({ page, children }) => {
   return (
     <Root>
       <Header name={page.name} />
-      <Content>{children}</Content>
+      <Container maxWidth="sm">
+        <Content>{children}</Content>
+      </Container>
       <Footer page={page} />
     </Root>
   );
