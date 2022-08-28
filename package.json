@@ -1,5 +1,5 @@
 {
-  "name": "redux_toolkit_sample",
+  "name": "saltamount",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,11 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.10.2",
+    "@mui/material": "^5.10.2",
+    "big.js": "^6.2.1",
     "next": "12.2.5",
+    "next-pwa": "^5.6.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "recoil": "^0.7.5"
   },
   "devDependencies": {
+    "@types/big.js": "^6.1.5",
     "@types/node": "18.7.13",
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
