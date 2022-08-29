@@ -17,11 +17,18 @@ function RecoilStateInitializer() {
     } else {
       setSources([
         {
-          name: "食塩",
+          name: "塩(重さ)",
           unit: Unit.Weight,
           unitSaltWeight: 1,
           amount: 1,
           saltWeight: 1,
+        },
+        {
+          name: "塩(量)",
+          unit: Unit.Amount,
+          unitSaltWeight: calcUnit(15, 18),
+          amount: 15,
+          saltWeight: 18,
         },
         {
           name: "濃口しょうゆ",
