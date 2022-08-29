@@ -1,7 +1,7 @@
 export const PAGE = {
   index: {
     path: "/",
-    name: "食塩量計算",
+    name: "食塩相当量計算",
   },
   sources: {
     path: "/sources",
