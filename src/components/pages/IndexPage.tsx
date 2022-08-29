@@ -27,9 +27,10 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import Big from "big.js";
-import React, { ChangeEventHandler, ReactNode, useState } from "react";
+import React, { ChangeEventHandler, ReactNode } from "react";
 import { Item } from "../../recoil/items";
 import { Source, Unit } from "../../recoil/sources";
+import { toNum } from "../../utils/stringUtils";
 
 const fabStyle = {
   position: "absolute",
@@ -95,6 +96,7 @@ const IndexPage: React.FC<IndexPageProps> = ({
   allDelete,
   onChangeSource,
   saltAmount,
+  disabled,
 }) => {
   return (
     <>
@@ -375,6 +377,7 @@ const IndexPage: React.FC<IndexPageProps> = ({
                   <Button
                     color="primary"
                     variant="contained"
+                    disabled={disabled}
                     sx={registerStyle}
                     onClick={register}
                   >
@@ -385,6 +388,7 @@ const IndexPage: React.FC<IndexPageProps> = ({
                   <Button
                     color="primary"
                     variant="contained"
+                    disabled={disabled}
                     sx={registerStyle}
                     onClick={register}
                   >
@@ -403,7 +407,7 @@ const IndexPage: React.FC<IndexPageProps> = ({
 interface IndexPageProps {
   sources: Array<Source>;
   items: Array<Item>;
-  targetItem: Item;
+  targetItem: ViewItem;
   onChangeSource: (event: SelectChangeEvent<string>, child: ReactNode) => void;
   onChangeTableSpoon: ChangeEventHandler<
     HTMLTextAreaElement | HTMLInputElement
@@ -430,6 +434,18 @@ interface IndexPageProps {
   updateOpen: (name: string) => void;
   allDelete: () => void;
   saltAmount: number;
+  disabled: boolean;
+}
+
+export interface ViewItem {
+  source: Source;
+  saltAmount: number;
+  tableSpoon: string;
+  teaSpoon: string;
+  cup: string;
+  amount: string;
+  weight: string;
+  count: string;
 }
 
 export default React.memo(IndexPage);

@@ -17,6 +17,7 @@ import {
   SelectChangeEvent,
   Box,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { ChangeEventHandler, ReactNode } from "react";
 import { Source, Unit } from "../../recoil/sources";
@@ -64,6 +65,8 @@ const SourcesPage: React.FC<SourcesPageProps> = ({
   modalClose,
   lineDelete,
   updateOpen,
+  disabled,
+  alreadyRegistered,
 }) => {
   return (
     <>
@@ -213,10 +216,20 @@ const SourcesPage: React.FC<SourcesPageProps> = ({
           <IconButton sx={closeStyle} onClick={modalClose}>
             <Close />
           </IconButton>
+          {alreadyRegistered && (
+            <Typography
+              color={"error"}
+              variant="body2"
+              sx={{ marginTop: "1em" }}
+            >
+              その調味料は既に登録されています
+            </Typography>
+          )}
           {isRegister && (
             <Button
               color="primary"
               variant="contained"
+              disabled={disabled}
               sx={registerStyle}
               onClick={register}
             >
@@ -227,6 +240,7 @@ const SourcesPage: React.FC<SourcesPageProps> = ({
             <Button
               color="primary"
               variant="contained"
+              disabled={disabled}
               sx={registerStyle}
               onClick={register}
             >
@@ -241,7 +255,9 @@ const SourcesPage: React.FC<SourcesPageProps> = ({
 
 interface SourcesPageProps {
   sources: Array<Source>;
-  targetSource: Source;
+  disabled: boolean;
+  alreadyRegistered: boolean;
+  targetSource: ViewSource;
   isRegister: boolean;
   onChangeName: ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>;
   onChangeUnit: (event: SelectChangeEvent<Unit>, child: ReactNode) => void;
@@ -255,6 +271,14 @@ interface SourcesPageProps {
   modalClose: () => void;
   lineDelete: (name: string) => void;
   updateOpen: (name: string) => void;
+}
+
+export interface ViewSource {
+  name: string;
+  unit: Unit;
+  amount: string;
+  saltWeight: string;
+  unitSaltWeight: number;
 }
 
 export default React.memo(SourcesPage);

@@ -8,9 +8,10 @@ import {
   useState,
 } from "react";
 import { SetterOrUpdater, useRecoilValue, useSetRecoilState } from "recoil";
-import SourcesPage from "../../components/pages/SourcesPage";
+import SourcesPage, { ViewSource } from "../../components/pages/SourcesPage";
 import { Source, sourcesState, Unit } from "../../recoil/sources";
 import Big from "big.js";
+import { StringToBig, toNum } from "../../utils/stringUtils";
 
 const SourcesPageContainer: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,25 +28,25 @@ const SourcesPageContainer: React.FC = () => {
     }
   }, [sources, change]);
 
-  const newSource: Source = useMemo(
+  const newSource: ViewSource = useMemo(
     () => ({
       name: "",
       unit: Unit.Amount,
       unitSaltWeight: 0,
-      amount: 0,
-      saltWeight: 0,
+      amount: "",
+      saltWeight: "",
     }),
     []
   );
 
-  const [targetSource, setTargetSource] = useState<Source>({
+  const [targetSource, setTargetSource] = useState<ViewSource>({
     ...newSource,
   });
 
   useEffect(() => {
-    if (targetSource.amount !== 0) {
-      const saltWeight = new Big(targetSource.saltWeight);
-      const result = saltWeight.div(new Big(targetSource.amount));
+    if (toNum(targetSource.amount) !== 0) {
+      const saltWeight = StringToBig(targetSource.saltWeight);
+      const result = saltWeight.div(StringToBig(targetSource.amount));
       setUnitSaltWeight(result.round(10).toNumber());
     }
   }, [targetSource]);
@@ -73,7 +74,13 @@ const SourcesPageContainer: React.FC = () => {
     (name: string) => {
       const newTargetSource = sources.find((source) => source.name === name);
       if (newTargetSource) {
-        setTargetSource({ ...newTargetSource });
+        setTargetSource({
+          name: newTargetSource.name,
+          unit: newTargetSource.unit,
+          unitSaltWeight: newTargetSource.unitSaltWeight,
+          amount: String(newTargetSource.amount),
+          saltWeight: String(newTargetSource.saltWeight),
+        });
         setModalOpen(true);
         setIsRegister(false);
       }
@@ -104,7 +111,7 @@ const SourcesPageContainer: React.FC = () => {
     (event: ChangeEvent<HTMLInputElement>) => {
       setTargetSource({
         ...targetSource,
-        amount: Number(event.target.value),
+        amount: event.target.value,
       });
     },
     [targetSource]
@@ -114,7 +121,7 @@ const SourcesPageContainer: React.FC = () => {
     (event: ChangeEvent<HTMLInputElement>) => {
       setTargetSource({
         ...targetSource,
-        saltWeight: Number(event.target.value),
+        saltWeight: event.target.value,
       });
     },
     [targetSource]
@@ -123,12 +130,24 @@ const SourcesPageContainer: React.FC = () => {
   const register = useCallback(() => {
     if (isRegister) {
       const newSouces = [...sources];
-      newSouces.push({ ...targetSource, unitSaltWeight });
+      newSouces.push({
+        name: targetSource.name,
+        unit: targetSource.unit,
+        amount: toNum(targetSource.amount),
+        saltWeight: toNum(targetSource.saltWeight),
+        unitSaltWeight,
+      });
       setSources(newSouces);
     } else {
       const newSouces = [...sources].map((source) =>
         source.name === targetSource.name
-          ? { ...targetSource, unitSaltWeight }
+          ? {
+              name: targetSource.name,
+              unit: targetSource.unit,
+              amount: toNum(targetSource.amount),
+              saltWeight: toNum(targetSource.saltWeight),
+              unitSaltWeight,
+            }
           : source
       );
       setSources(newSouces);
@@ -136,6 +155,26 @@ const SourcesPageContainer: React.FC = () => {
     isChange(true);
     setModalOpen(false);
   }, [isRegister, setSources, sources, targetSource, unitSaltWeight]);
+
+  const alreadyRegistered = useMemo(() => {
+    return (
+      isRegister && sources.some((source) => source.name === targetSource.name)
+    );
+  }, [isRegister, sources, targetSource.name]);
+
+  const disabled = useMemo(() => {
+    return (
+      targetSource.name === "" ||
+      toNum(targetSource.amount) === 0 ||
+      toNum(targetSource.saltWeight) === 0 ||
+      alreadyRegistered
+    );
+  }, [
+    alreadyRegistered,
+    targetSource.amount,
+    targetSource.name,
+    targetSource.saltWeight,
+  ]);
 
   const props = {
     sources,
@@ -151,6 +190,8 @@ const SourcesPageContainer: React.FC = () => {
     onChangeAmount,
     onChangeSaltWeight,
     register,
+    disabled,
+    alreadyRegistered,
   };
   return <SourcesPage {...props} />;
 };
